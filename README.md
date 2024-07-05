@@ -1,7 +1,5 @@
 # Prueba Técnica
 
-Breve descripción del proyecto: qué hace, para qué se utiliza, qué problemas resuelve, etc.
-
 ## Requisitos Previos
 
 Lista todo el software necesario para ejecutar el proyecto, como:
