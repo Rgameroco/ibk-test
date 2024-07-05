@@ -1,0 +1,36 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+rule_files:
+  - "/etc/prometheus/rules/*.rules"
+
+scrape_configs:
+  - job_name: 'kubernetes-apiservers'
+    kubernetes_sd_configs:
+      - role: endpoints
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: 'default;kubernetes;https'
+
+  - job_name: 'spring-boot'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'pruebatecnica-service:8080' ]
+
+storage:
+  volumeClaimTemplate:
+    spec:
+      storageClassName: standard
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+
+retention: "10d"

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pruebatecnica-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pruebatecnica
+  template:
+    metadata:
+      labels:
+        app: pruebatecnica
+    spec:
+      containers:
+        - name: pruebatecnica
+          image: rgameroco70/pruebatecnica:tagname
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+          - name: regcred
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-boot-app-service
+  labels:
+    app: spring-boot-app
+spec:
+  selector:
+    app: spring-boot-app
+  ports:
+    - protocol: TCP
+      name: http-traffic
+      port: 8080
+      targetPort: 8080
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: spring-boot-app-service-monitor
+spec:
+  selector:
+    matchLabels:
+      app: spring-boot-app
+  endpoints:
+    - port: http-traffic
+      path: "/actuator/prometheus"

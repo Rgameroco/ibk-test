@@ -1,0 +1,44 @@
+replicaCount: 1
+
+service:
+  type: LoadBalancer
+  port: 80
+
+ingress:
+  enabled: false
+
+adminUser: admin
+adminPassword: strongpassword
+
+persistence:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+grafana.ini:
+  server:
+    root_url: "%(protocol)s://%(domain)s/grafana/"
+    serve_from_sub_path: true
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki-gateway.default.svc.cluster.local:80
+        isDefault: true  # Loki es la predeterminada
+        jsonData:
+          maxLines: 1000
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-server.default.svc.cluster.local
+        isDefault: false  # Prometheus no es la predeterminada
